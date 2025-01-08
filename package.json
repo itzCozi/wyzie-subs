@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "nitro build",
+    "dev": "nitro dev",
+    "format": "prettier --log-level warn --write \"src/**/*.{ts,json}\"",
+    "build:cloudflare": "NITRO_PRESET=cloudflare npm run build",
+    "prepare": "nitro prepare",
+    "preview": "node .output/server/index.mjs"
+  },
+  "devDependencies": {
+    "nitropack": "latest",
+    "prettier": "3.3.3"
+  },
+  "dependencies": {
+    "h3": "^1.13.0",
+    "nitropack": "^2.10.4"
+  }
+}
