@@ -4,16 +4,12 @@ import { convertTmdbToImdb, fetchSubtitles } from "~/utils/utils";
 import { RequestType, ResponseType } from "~/utils/types";
 import { languageToCountryCode } from "~/utils/lookup";
 
-export async function search(
-  request: RequestType,
-  languages?: string[],
-  hearingImpaired?: boolean,
-): Promise<ResponseType[]> {
+export async function search(request: RequestType): Promise<ResponseType[]> {
   try {
     if (!request.imdbId) {
       if (request.tmdbId) {
         const mediaType = request.season !== undefined ? "tv" : "movie";
-        request.imdbId = await convertTmdbToImdb(request.tmdbId, mediaType);
+        request.imdbId = await convertTmdbToImdb(`${request.tmdbId}`, mediaType);
       } else {
         throw new Error("imdbId is required");
       }
@@ -22,18 +18,26 @@ export async function search(
     const safeRequest: RequestType = {
       ...request,
       imdbId: request.imdbId as string,
+      tmdbId: undefined,
     };
-
     const data = await fetchSubtitles(safeRequest);
 
     const subtitles: ResponseType[] = await Promise.all(
       data.map(async (sub) => {
-        const hearingImpairedMatch = !hearingImpaired || sub.SubHearingImpaired === "1";
+        const hearingImpairedMatch = !request.hearingImpaired || sub.SubHearingImpaired === "1";
         const languageMatch =
-          !languages || languages.length === 0 || languages.includes(sub.ISO639);
+          !request.languages ||
+          request.languages.length === 0 ||
+          request.languages.includes(sub.ISO639);
         const formatMatch =
-          !request.format || sub.SubFormat.toLowerCase() === request.format.toLowerCase();
-        if (languageMatch && formatMatch && hearingImpairedMatch) {
+          !request.formats ||
+          request.formats.length === 0 ||
+          request.formats.includes(sub.SubFormat.toLowerCase());
+        const encodingMatch =
+          !request.encodings ||
+          request.encodings.length === 0 ||
+          request.encodings.includes(sub.SubEncoding.toLowerCase());
+        if (languageMatch && formatMatch && hearingImpairedMatch && encodingMatch) {
           const countryCode = languageToCountryCode[sub.ISO639] || sub.ISO639.toUpperCase();
           return {
             id: sub.IDSubtitleFile,
@@ -41,9 +45,9 @@ export async function search(
               "download/",
               "download/subencoding-utf8/",
             ),
-            // There is no PB flag, so we use BR instead
-            flagUrl: `https://flagsapi.com/${countryCode === "PB" ? "BR" : countryCode}/flat/24.png`,
+            flagUrl: `https://flagsapi.com/${countryCode}/flat/24.png`,
             format: sub.SubFormat,
+            encoding: sub.SubEncoding,
             display: sub.LanguageName,
             language: sub.ISO639,
             media: sub.MovieName,
@@ -55,7 +59,7 @@ export async function search(
     );
 
     return subtitles.filter((sub) => sub !== null);
-  } catch (error) {
-    throw new Error("Error in search function:", error);
+  } catch (e) {
+    throw new Error(`Error in search function: ${e}`);
   }
 }

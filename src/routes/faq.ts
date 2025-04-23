@@ -36,7 +36,7 @@ export default eventHandler(() => {
         "logo": "https://i.postimg.cc/L5ppKYC5/cclogo.png",
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://sub.wyzie.ru/search?q={search_term_string}",
+          "target": "https://sub.wyzie.ru/search?id={search_term_string}",
           "query-input": "required name=search_term_string"
         }
       }
@@ -72,7 +72,8 @@ export default eventHandler(() => {
         <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
           <h3 class="font-semibold text-type-subheader">How can I contact the dev?</h3>
           <p class="text-type-dimmed text-sm">
-            I can be reached via email at <a href="mailto:dev@wyzie.ru" class="text-primary-500 hover:text-primary-600 transition duration-100" alt="Email" title="Email">dev@wyzie.ru</a> or via our community <a href="https://discord.gg/2mxraHBVtB" class="text-primary-500 hover:text-primary-600 transition duration-100" alt="Discord server" title="Discord server">Discord server</a>.
+            I can be reached via email at <a href="mailto:dev@wyzie.ru" class="text-primary-500 hover:text-primary-600 transition duration-100 underline font-semibold" alt="Email" title="Email">dev@wyzie.ru</a> or via our community
+            <a href="https://discord.gg/2mxraHBVtB" class="text-primary-500 hover:text-primary-600 transition duration-100 underline font-semibold" alt="Discord server" title="Discord server">Discord server</a>.
           </p>
         </div>
         <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
@@ -90,8 +91,8 @@ export default eventHandler(() => {
         <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
           <h3 class="font-semibold text-type-subheader">How to implement this into my project?</h3>
           <p class="text-type-dimmed text-sm">
-            We have pre-written implementations for Node.js, Python, and Typescript. You can find them
-            <a href="/implement" class="text-primary-500 hover:text-primary-600 transition duration-100" alt="Implementations" title="Implement">here</a>.
+            Use our open-source <a href="https://docs.wyzie.ru/subs/usage/package" class="text-primary-500 hover:text-primary-600 transition duration-100 underline font-semibold" alt="Wyzie Lib" title="Wyzie Lib">NPM Package</a> with zero
+            dependencies!
           </p>
         </div>
         <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
@@ -109,9 +110,8 @@ export default eventHandler(() => {
       </div>
       <section>
         <div class="flex justify-between text-s text-type-footer mt-6">
-          <p class="text-left">
-            <a href="/" class="text-primary-500 hover:text-primary-600 transition duration-100" alt="Back" title="Back">← Back</a>
-          </p>
+          <a href="/" class="text-primary-500 hover:text-primary-600 transition duration-100" alt="Back" title="Back">← Back</a>
+          <a href="https://docs.wyzie.ru/subs/intro" class="text-primary-500 hover:text-primary-600 transition duration-100" alt="Back" title="Back">Read the docs</a>
         </div>
       </section>
     </div>

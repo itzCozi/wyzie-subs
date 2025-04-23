@@ -15,7 +15,7 @@
 
 ### Usage Example
 
-**Required Environment Variable**: you need to set the `PROXIES` environment variable to your CORS proxies urls.
+**Required Environment Variable**:
 
 ```
 PROXIES=https://torn-unicorn.fly.dev,https://proxy.wyzie.ru

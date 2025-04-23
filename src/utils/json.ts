@@ -35,6 +35,7 @@ function isValidSubtitle(obj: SubtitleInput): obj is Subtitle {
     typeof obj.IDSubtitleFile === "string" &&
     typeof obj.SubFormat === "string" &&
     typeof obj.MovieName === "string" &&
+    typeof obj.SubEncoding === "string" &&
     typeof obj.SubDownloadLink === "string"
   );
 }

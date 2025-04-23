@@ -43,6 +43,7 @@ export default eventHandler(() => {
     </script>
     <script>
       const links = [
+        "https://sub.wyzie.ru/search?id=tt3659388&encoding=utf-8,ascii&language=en&format=srt,sub,ass",
         "/search?id=tt3659388&language=en&format=srt",
         "/search?id=872585&language=nl",
         "/search?id=tt1130884&format=srt",
@@ -55,6 +56,18 @@ export default eventHandler(() => {
         "/search?id=533535&hi=true",
         "/search?id=2567",
       ];
+
+      function toggleExtraOptions() {
+        const extraOptions = document.getElementById("extra-options");
+        const showMoreButton = document.querySelector('button[onclick="toggleExtraOptions()"]');
+        if (extraOptions.classList.contains("hidden")) {
+          extraOptions.classList.remove("hidden");
+          showMoreButton.style.display = "none";
+        } else {
+          extraOptions.classList.add("hidden");
+          showMoreButton.style.display = "block";
+        }
+      }
 
       function redirectToRandomLink() {
         const randomIndex = Math.floor(Math.random() * links.length);
@@ -93,8 +106,8 @@ export default eventHandler(() => {
           <p class="text-type-dimmed mb-4">
             Wyzie Subs is a free & libre open-subtitles scraping API that uses proxied requests instead of fetching directly from the API.
             <br />
-            <a href="https://www.npmjs.com/package/wyzie-lib" class="text-primary-500 font-semibold hover:text-primary-600 transition duration-100 underline" alt="Wyzie Lib NPM Package" title="NPM Package">
-              NPM Package
+            <a href="https://docs.wyzie.ru/subs/intro" class="text-primary-500 font-semibold hover:text-primary-600 transition duration-100 underline" alt="Wyzie Subs docs" title="Read our docs">
+              Read our docs
             </a>
           </p>
         </section>
@@ -111,27 +124,30 @@ export default eventHandler(() => {
         </section>
 
         <section>
-          <div class="space-y-4 mb-6">
+          <div class="space-y-4 mb-5">
             <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
-              <div class="flex flex-row gap-1 items-center">
+              <div class="flex flex-row gap-2 items-center">
                 <h3 class="font-semibold text-type-subheader">Search by IMDB / TMDB ID</h3>
-                <svg
-                  class="text-type-dimmed w-4 h-4 mb-2"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide-icon lucide lucide-circle-alert text-type-dimmed w-4 h-4 mb-3 -ml-1"
-                >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" x2="12" y1="8" y2="12"></line>
-                  <line x1="12" x2="12.01" y1="16" y2="16"></line>
-                </svg>
+                <div title="ID parameter is required, either TMDB or IMDB.">
+                  <svg
+                    title="ID parameter is required, either TMDB or IMDB."
+                    class="text-type-dimmed w-4 h-4 mb-2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide-icon lucide lucide-circle-alert text-type-dimmed w-4 h-4"
+                  >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" x2="12" y1="8" y2="12"></line>
+                    <line x1="12" x2="12.01" y1="16" y2="16"></line>
+                  </svg>
+                </div>
               </div>
               <div class="flex flex-row gap-1">
                 <a href="/search?id=tt3659388" alt="Example link: search by IMDB ID" title="Search by IMDB ID">
@@ -152,22 +168,93 @@ export default eventHandler(() => {
               </a>
             </div>
             <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
-              <h3 class="font-semibold text-type-subheader">Search by language</h3>
-              <a href="/search?id=tt0121955&language=en" alt="Example link: search by language" title="Search by language">
-                <code class="text-sm text-primary-500 hover:text-primary-600 transition duration-100 break-words">/search?id=tt0121955&language=en</code>
+              <div class="flex flex-row gap-2 items-center">
+                <h3 class="font-semibold text-type-subheader">Search by language</h3>
+                <div title="You can search multiple languages by separating them with a comma.">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide-icon lucide lucide-circle-alert text-type-dimmed w-4 h-4"
+                  >
+                    <circle cx="12" cy="12" r="1" />
+                    <circle cx="19" cy="12" r="1" />
+                    <circle cx="5" cy="12" r="1" />
+                  </svg>
+                </div>
+              </div>
+              <a href="/search?id=tt3659388&language=en" alt="Example link: search by language" title="Search by language">
+                <code class="text-sm text-primary-500 hover:text-primary-600 transition duration-100 break-words">/search?id=tt3659388&language=en</code>
               </a>
             </div>
             <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
-              <h3 class="font-semibold text-type-subheader">Search by format</h3>
-              <a href="/search?id=tt0121955&format=srt" alt="Example link: search by file format" title="Search by ID and format">
-                <code class="text-sm text-primary-500 hover:text-primary-600 transition duration-100 break-words">/search?id=tt0121955&format=srt</code>
+              <div class="flex flex-row gap-2 items-center">
+                <h3 class="font-semibold text-type-subheader">Search by format</h3>
+                <div title="You can search multiple formats by separating them with a comma.">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide-icon lucide lucide-circle-alert text-type-dimmed w-4 h-4"
+                  >
+                    <circle cx="12" cy="12" r="1" />
+                    <circle cx="19" cy="12" r="1" />
+                    <circle cx="5" cy="12" r="1" />
+                  </svg>
+                </div>
+              </div>
+              <a href="/search?id=tt3659388&format=srt" alt="Example link: search by file format" title="Search by ID and format">
+                <code class="text-sm text-primary-500 hover:text-primary-600 transition duration-100 break-words">/search?id=tt3659388&format=srt</code>
               </a>
             </div>
-            <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
-              <h3 class="font-semibold text-type-subheader">Search by hearing impaired</h3>
-              <a href="/search?id=tt0121955&hi=true" alt="Example link: search by hearing impaired" title="Search by hearing impaired">
-                <code class="text-sm text-primary-500 hover:text-primary-600 transition duration-100 break-words">/search?id=tt0121955&hi=true</code>
-              </a>
+            <button onclick="toggleExtraOptions()" class="text-sm text-primary-500 font-semibold hover:text-primary-600 transition duration-100" alt="Show More" title="Show More">
+              Show More
+            </button>
+            <div id="extra-options" class="hidden space-y-4">
+              <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
+                <div class="flex flex-row gap-2 items-center">
+                  <h3 class="font-semibold text-type-subheader">Search by character encoding</h3>
+                  <div title="You can search multiple encodings by separating them with a comma.">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide-icon lucide lucide-circle-alert text-type-dimmed w-4 h-4"
+                    >
+                      <circle cx="12" cy="12" r="1" />
+                      <circle cx="19" cy="12" r="1" />
+                      <circle cx="5" cy="12" r="1" />
+                    </svg>
+                  </div>
+                </div>
+                <a href="/search?id=tt3659388&encoding=utf-8" alt="Example link: search by character encoding" title="Search by character encoding">
+                  <code class="text-sm text-primary-500 hover:text-primary-600 transition duration-100 break-words">/search?id=tt3659388&encoding=utf-8</code>
+                </a>
+              </div>
+              <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
+                <h3 class="font-semibold text-type-subheader">Search by hearing impaired</h3>
+                <a href="/search?id=tt3659388&hi=true" alt="Example link: search by hearing impaired" title="Search by hearing impaired">
+                  <code class="text-sm text-primary-500 hover:text-primary-600 transition duration-100 break-words">/search?id=tt3659388&hi=true</code>
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -178,10 +265,10 @@ export default eventHandler(() => {
               Check it out
             </button>
           </a>
-          <div class="flex justify-between text-xs text-type-footer mt-8">
+          <div class="flex justify-between text-xs text-type-footer mt-7">
             <p class="text-left">Made with <a href="https://nitro.unjs.io" class="text-primary-500 hover:text-primary-600 transition duration-100 underline" alt="Nitro framework" title="Nitro framework">Nitro</a></p>
             <p class="text-right">
-              Version: 5.9
+              Version: 6.8
             </p>
           </div>
         </section>
