@@ -1,8 +1,11 @@
 /** @format */
 
-import { RequestType } from "~/utils/types";
-import { proxyFetch } from "~/utils/proxy";
 import { parseSubtitles } from "~/utils/json";
+import type { RequestType } from "~/utils/types";
+import { proxyFetch } from "~/utils/proxy";
+import numberToWords from "number-to-words";
+
+const { toWords } = numberToWords;
 
 export const fetchSubtitles = async (request: RequestType) => {
   const { imdbId, season, episode } = request;
@@ -65,3 +68,23 @@ export const createErrorResponse = (
     },
   });
 };
+
+export function numberToCardinal(n: number): string {
+  const suffixes: { [key: number]: string } = {
+    1: "first",
+    2: "second",
+    3: "third",
+  };
+
+  const exceptions = [11, 12, 13]; // Special cases for 11th, 12th, 13th
+  const remainder = n % 10;
+  const suffix = exceptions.includes(n % 100) ? "th" : suffixes[remainder] || "th";
+
+  const words = toWords(n);
+  const ordinal =
+    exceptions.includes(n % 100) ?
+      `${words}th`
+    : words.replace(/\b(one|two|three)\b/, (match) => suffixes[remainder] || match);
+
+  return ordinal;
+}

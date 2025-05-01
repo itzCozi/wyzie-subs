@@ -1,9 +1,8 @@
 /** @format */
 
 import { createErrorResponse, convertTmdbToImdb } from "~/utils/utils";
-import { RequestType, ResponseType } from "~/utils/types";
+import type { RequestType, ResponseType } from "~/utils/types";
 import { search } from "~/utils/function";
-import process from "nitropack/presets/_unenv/workerd/process";
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
@@ -16,6 +15,25 @@ export default defineEventHandler(async (event) => {
     );
   }
 
+  const cacheKey = getRequestURL(event).toString();
+  // @ts-ignore - caches.default is available in CF Workers runtime
+  const isCacheAvailable = typeof caches !== "undefined" && caches.default;
+  // @ts-ignore - caches.default is available in CF Workers runtime
+  const cache = isCacheAvailable ? caches.default : null;
+
+  if (isCacheAvailable && cache) {
+    try {
+      const cachedResponse = await cache.match(cacheKey);
+      if (cachedResponse) {
+        console.log(`Cache HIT for: ${cacheKey}`);
+        return cachedResponse;
+      }
+      console.log(`Cache MISS for: ${cacheKey}`);
+    } catch (cacheError) {
+      console.error(`Cache match error: ${cacheError}`);
+    }
+  }
+
   // all parameters must be lowercase and without spaces
   const id = (query.id as string).toLowerCase();
   const season = query.season ? parseInt(query.season as string) : undefined;
@@ -26,6 +44,7 @@ export default defineEventHandler(async (event) => {
   const encodings =
     query.encoding ? (query.encoding as string).toLowerCase().split(",") : undefined;
   const hearingImpaired = query.hi as boolean | undefined;
+  const source = query.source ? (query.source as string).toLowerCase() : undefined;
   var imdbId: string | undefined;
   var tmdbId: string | undefined;
 
@@ -75,6 +94,20 @@ export default defineEventHandler(async (event) => {
     );
   }
 
+  if (source) {
+    const validSources = ["subdl", "opensubtitles"];
+    const sourceList = source.split(",").map((s) => s.trim().toLowerCase());
+
+    if (!sourceList.every((s) => validSources.includes(s))) {
+      return createErrorResponse(
+        400,
+        "Invalid source",
+        `Source must be one or more of the following: ${validSources.join(", ")}.`,
+        "/search?id=tt0111161&source=subdl,opensubtitles",
+      );
+    }
+  }
+
   const request: RequestType = {
     languages,
     formats,
@@ -83,6 +116,7 @@ export default defineEventHandler(async (event) => {
     season,
     episode,
     hearingImpaired,
+    source,
   };
 
   try {
@@ -100,25 +134,38 @@ export default defineEventHandler(async (event) => {
       );
     }
 
-    // transformation
     const transformedData = data.map((item: ResponseType) => {
       const originalUrl = item.url;
-      let newUrl = originalUrl; // this would never happen but just in case
-      const vrfMatch = originalUrl.match(/vrf-([a-z0-9]+)/);
-      const fileIdMatch = originalUrl.match(/file\/(\d+)/);
+      let newUrl = originalUrl;
 
-      if (vrfMatch && vrfMatch[1] && fileIdMatch && fileIdMatch[1]) {
-        const vrf = vrfMatch[1];
-        const fileId = fileIdMatch[1];
-        const host =
-          process.env.NODE_ENV === "production" ? "https://sub.wyzie.ru" : "http://localhost:3000";
-        // add format and encoding as query parameters because you don't know what they are
-        const formatParam = item.format ? `format=${encodeURIComponent(item.format)}` : "";
-        const encodingParam = item.encoding ? `encoding=${encodeURIComponent(item.encoding)}` : "";
-        const queryParams = [formatParam, encodingParam].filter(Boolean).join("&");
-        newUrl = `${host}/c/${vrf}/id/${fileId}${queryParams ? "?" + queryParams : ""}`;
+      if (item.source === "subdl") {
+        const [source, id, filename] = originalUrl.split("/");
+        if (source === "subdl" && id && filename) {
+          const host =
+            process.env.NODE_ENV === "production" ?
+              "https://sub.wyzie.ru"
+            : "http://localhost:8787";
+          const pseudoVrf = id;
+          const cleanFilename = filename.endsWith(".zip") ? filename.slice(0, -4) : filename;
+          let downloadId = cleanFilename.includes("-") ? cleanFilename : `${id}-${cleanFilename}`;
+          newUrl = `${host}/c/${pseudoVrf}/id/${downloadId}.subdl`;
+        }
       } else {
-        console.warn(`Could not parse URL format for: ${originalUrl}`);
+        const vrfMatch = originalUrl.match(/vrf-([a-z0-9]+)/);
+        const fileIdMatch = originalUrl.match(/file\/(\d+)/);
+        if (vrfMatch && vrfMatch[1] && fileIdMatch && fileIdMatch[1]) {
+          const vrf = vrfMatch[1];
+          const fileId = fileIdMatch[1];
+          const host =
+            process.env.NODE_ENV === "production" ?
+              "https://sub.wyzie.ru"
+            : "http://localhost:3000";
+          const formatParam = item.format ? `format=${encodeURIComponent(item.format)}` : "";
+          const encodingParam =
+            item.encoding ? `encoding=${encodeURIComponent(item.encoding)}` : "";
+          const queryParams = [formatParam, encodingParam].filter(Boolean).join("&");
+          newUrl = `${host}/c/${vrf}/id/${fileId}${queryParams ? "?" + queryParams : ""}`;
+        }
       }
 
       return {
@@ -127,9 +174,22 @@ export default defineEventHandler(async (event) => {
       };
     });
 
-    return new Response(JSON.stringify(transformedData), {
-      headers: { "content-type": "application/json" },
+    const finalResponse = new Response(JSON.stringify(transformedData), {
+      headers: {
+        "content-type": "application/json",
+        "Cache-Control": "public, max-age=604800, immutable",
+      },
     });
+
+    if (isCacheAvailable && cache && finalResponse.ok) {
+      if (typeof event.waitUntil === "function") {
+        event.waitUntil(cache.put(cacheKey, finalResponse.clone()));
+      } else {
+        await cache.put(cacheKey, finalResponse.clone());
+      }
+    }
+
+    return finalResponse;
   } catch (e) {
     return createErrorResponse(
       500,

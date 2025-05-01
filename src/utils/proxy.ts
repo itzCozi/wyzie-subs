@@ -1,6 +1,8 @@
 /** @format */
 
-const USER_AGENTS = [
+import { subtle } from "crypto";
+
+export const USER_AGENTS = [
   // Windows browsers
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
@@ -23,12 +25,12 @@ const USER_AGENTS = [
   "Mozilla/5.0 (Linux; Android 13; Pixel 6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
 ];
 
-const getHeaders = (userAgent: string) => {
+const getHeaders = (userAgent: string, extraHeaders: Record<string, string> = {}) => {
   const isWindows = userAgent.includes("Windows");
   const isMac = userAgent.includes("Macintosh");
   const isMobile = userAgent.includes("Mobile");
 
-  return {
+  const defaultHeaders = {
     "User-Agent": userAgent,
     Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.9",
@@ -50,23 +52,26 @@ const getHeaders = (userAgent: string) => {
     "Cache-Control": "max-age=0",
     Connection: "keep-alive",
   };
+
+  return { ...defaultHeaders, ...extraHeaders };
 };
 
-export const getValidProxy = async () => {
-  try {
-    const data = await useStorage("assets:server").getItem("proxies.json");
-    const parsedData = typeof data === "string" ? JSON.parse(data) : data;
+async function deriveToken(sharedSecret: string, key: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const keyMaterial = await subtle.importKey(
+    "raw",
+    encoder.encode(key),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
 
-    for (let i = 0; i < parsedData.proxies.length; i++) {
-      const randomIndex = Math.floor(Math.random() * parsedData.proxies.length);
-      const proxy = parsedData.proxies[randomIndex];
-      return proxy;
-    }
-  } catch (e) {
-    console.error(`Error getting valid proxy: ${e}`);
-    throw new Error(e);
-  }
-};
+  const signature = await subtle.sign("HMAC", keyMaterial, encoder.encode(sharedSecret));
+
+  return Array.from(new Uint8Array(signature))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
 export async function proxyFetch(
   url: string,
@@ -74,16 +79,23 @@ export async function proxyFetch(
   retryCount: number = 3,
 ): Promise<Response> {
   try {
-    const proxy = await getValidProxy();
+    const proxy = "https://github.com/itzcozi/i6.shark";
     const proxyUrl = new URL(proxy);
     const userAgent = USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
     const defaultHeaders = getHeaders(userAgent);
-    proxyUrl.searchParams.set("destination", url);
+    const sharedSecret = process.env.PROXY_SECRET;
+    if (!sharedSecret || sharedSecret.trim() === "") {
+      throw new Error("PROXY_SECRET is not set. Valve pls fix.");
+    }
+    const apiToken = await deriveToken(sharedSecret,  Date.now().toString());
+
+    proxyUrl.searchParams.set("url", url);
     const proxyOptions = {
       ...options,
       headers: {
         ...defaultHeaders,
         ...options?.headers,
+        "API-Token": apiToken,
       },
     };
 

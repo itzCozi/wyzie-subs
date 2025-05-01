@@ -2,6 +2,7 @@
 
 import { proxyFetch } from "~/utils/proxy";
 import { createErrorResponse } from "~/utils/utils";
+import { unzipAndExtractSubtitle } from "~/utils/unzip";
 
 const formatToMimeType: Record<string, string> = {
   srt: "text/plain",
@@ -10,6 +11,7 @@ const formatToMimeType: Record<string, string> = {
   vtt: "text/vtt",
   sub: "text/plain",
   txt: "text/plain",
+  zip: "application/zip", // Add support for ZIP files from SubDL
 };
 
 export default defineEventHandler(async (event) => {
@@ -47,6 +49,7 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   const format = query.format as string | undefined;
   const encoding = query.encoding as string | undefined;
+  const autoUnzip = query.autoUnzip !== "false"; // Default to true
 
   console.log(`Handling request for /c/${vrf}/id/${fileId}?format=${format}&encoding=${encoding}`);
 
@@ -54,12 +57,135 @@ export default defineEventHandler(async (event) => {
     return createErrorResponse(400, "Bad Request", "Missing vrf or fileId parameter.");
   }
 
-  const targetUrl = `https://dl.opensubtitles.org/en/download/subencoding-utf8/src-api/vrf-${vrf}/file/${fileId}`;
+  // subdl url check (fileId ends with .subdl)
+  const isSubDL = fileId.toLowerCase().endsWith(".subdl");
+  let targetUrl: string;
+
+  if (isSubDL) {
+    // handle subdl url
+    // Extract the real filename by removing the .subdl extension
+    const realFileId = fileId.slice(0, -6); // remove ".subdl"
+
+    // for subdl, we need to add back .zip extension if not present
+    const subdlFilename = realFileId.endsWith(".zip") ? realFileId : `${realFileId}.zip`;
+
+    // the correct subdl url format is dl.subdl.com/subtitle/{ID-FILEID}.zip
+    targetUrl = `https://dl.subdl.com/subtitle/${subdlFilename}`;
+    console.log(`SubDL download URL: ${targetUrl}`);
+
+    // for subdl zip, we can auto-extract srt file if requested
+    if (isSubDL && autoUnzip) {
+      try {
+        console.log(`[SubDL] Auto-extracting subtitle from ZIP file: ${targetUrl}`);
+        const extractResult = await unzipAndExtractSubtitle(targetUrl);
+
+        // add detailed log of the extract result
+        console.log(
+          `[SubDL] Extract result:`,
+          JSON.stringify({
+            success: extractResult.success,
+            hasContent: !!extractResult.content,
+            filename: extractResult.filename,
+            contentLength: extractResult.content?.length,
+            binary: extractResult.binary,
+            error: extractResult.error,
+          }),
+        );
+
+        if (!extractResult.success) {
+          console.error(
+            `[SubDL] Failed to extract subtitle: ${extractResult.error || "Unknown error"}`,
+          );
+
+          // return error instead of falling back to direct download
+          return createErrorResponse(
+            500,
+            "Subtitle Extraction Failed",
+            `Could not extract subtitle from ZIP: ${extractResult.error || "Unknown error"}`,
+          );
+        } else {
+          // process based on whether it's binary or text content
+          if (extractResult.binary && extractResult.buffer) {
+            // for binary subtitles, return the buffer with appropriate content type
+            const fileExt = extractResult.filename?.split(".").pop()?.toLowerCase() || "sub";
+            const mimeType =
+              fileExt === "idx" ? "application/x-mplayer2" : "application/octet-stream";
+
+            // create response with binary data
+            const finalResponse = new Response(extractResult.buffer, {
+              headers: {
+                "Content-Type": mimeType,
+                "Cache-Control": "public, max-age=31536000, immutable",
+                "Content-Disposition": `attachment; filename="${extractResult.filename}"`,
+              },
+            });
+
+            // cache this response
+            if (isCacheAvailable && cache && finalResponse && finalResponse.ok) {
+              if (typeof event.waitUntil === "function") {
+                event.waitUntil(cache.put(cacheKey, finalResponse.clone()));
+              } else {
+                await cache.put(cacheKey, finalResponse.clone());
+              }
+            }
+
+            return finalResponse;
+          } else if (extractResult.content) {
+            // for text-based subtitles, proceed as before
+            // get format from the extracted filename or fallback to default
+            const extractedFormat =
+              extractResult.filename?.split(".").pop()?.toLowerCase() || "srt";
+            const mimeType = formatToMimeType[extractedFormat] || "text/plain";
+            const charset = encoding ? encoding : "utf-8";
+            const contentType = `${mimeType}; charset=${charset}`;
+
+            // create the response with the extracted text content
+            const finalResponse = new Response(extractResult.content, {
+              headers: {
+                "Content-Type": contentType,
+                "Cache-Control": "public, max-age=31536000, immutable",
+                "Content-Disposition": `inline; filename="${extractResult.filename}"`,
+              },
+            });
+
+            // cache this response
+            if (isCacheAvailable && cache && finalResponse && finalResponse.ok) {
+              if (typeof event.waitUntil === "function") {
+                event.waitUntil(cache.put(cacheKey, finalResponse.clone()));
+              } else {
+                await cache.put(cacheKey, finalResponse.clone());
+              }
+            }
+
+            return finalResponse;
+          } else {
+            // this shouldn't happen if success=true, but handle it just in case
+            return createErrorResponse(
+              500,
+              "Subtitle Processing Error",
+              "Subtitle was successfully extracted but no content was found",
+            );
+          }
+        }
+      } catch (extractError) {
+        console.error(`[SubDL] Error during subtitle extraction: ${extractError}`);
+        // if extraction fails, then  say fail, we will not  give download to zip
+      }
+    }
+  } else {
+    // handle regular opensub url
+    targetUrl = `https://dl.opensubtitles.org/en/download/subencoding-utf8/src-api/vrf-${vrf}/file/${fileId}`;
+  }
 
   try {
-    response = await proxyFetch(targetUrl, {
-      headers: { "X-User-Agent": "VLSub 0.10.3" },
-    });
+    // use different headers depending on the source
+    const headers =
+      isSubDL ?
+        {} // subdl doesn't need special headers
+      : { "X-User-Agent": "VLSub 0.10.3" }; // opensub needs this header
+
+    // always use proxyFetch to avoid ratelimit (subdl has ratelimit)
+    response = await proxyFetch(targetUrl, { headers });
 
     if (!response || !response.ok) {
       const status = response?.status || "unknown";
@@ -75,7 +201,26 @@ export default defineEventHandler(async (event) => {
     // raw data
     const subtitleContent = await response.arrayBuffer();
 
-    const mimeType = format ? formatToMimeType[format.toLowerCase()] || "text/plain" : "text/plain";
+    // check content type based on actual file format
+    let actualFormat = format;
+    if (!actualFormat && fileId) {
+      // extract format from filename if not specified in query
+      const filenameParts =
+        isSubDL ?
+          fileId.slice(0, -6).split(".") // remove .subdl and get extension
+        : fileId.split(".");
+
+      if (filenameParts.length > 1) {
+        actualFormat = filenameParts.pop()?.toLowerCase();
+      }
+    }
+
+    // for subdl, always use zip as the format
+    if (isSubDL) {
+      actualFormat = "zip";
+    }
+
+    const mimeType = actualFormat ? formatToMimeType[actualFormat] || "text/plain" : "text/plain";
     const charset = encoding ? encoding : "utf-8";
     const contentType = `${mimeType}; charset=${charset}`;
 

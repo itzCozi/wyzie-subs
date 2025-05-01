@@ -219,7 +219,7 @@ export default eventHandler(() => {
                 <code class="text-sm text-primary-500 hover:text-primary-600 transition duration-100 break-words">/search?id=tt3659388&format=srt</code>
               </a>
             </div>
-            <button onclick="toggleExtraOptions()" class="text-sm text-primary-500 font-semibold hover:text-primary-600 transition duration-100" alt="Show More" title="Show More">
+            <button onclick="toggleExtraOptions()" class="text-primary-500 font-semibold hover:text-primary-600 transition duration-100 mb-2" alt="Show More" style="font-size: 11pt;" title="Show More">
               Show More
             </button>
             <div id="extra-options" class="hidden space-y-4">
@@ -250,6 +250,32 @@ export default eventHandler(() => {
                 </a>
               </div>
               <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
+                <div class="flex flex-row gap-2 items-center">
+                  <h3 class="font-semibold text-type-subheader">Search by source</h3>
+                  <div title="You can search multiple sources by separating them with a comma.">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide-icon lucide lucide-circle-alert text-type-dimmed w-4 h-4"
+                    >
+                      <circle cx="12" cy="12" r="1" />
+                      <circle cx="19" cy="12" r="1" />
+                      <circle cx="5" cy="12" r="1" />
+                    </svg>
+                  </div>
+                </div>
+                <a href="/search?id=tt3659388&source=subdl" alt="Example link: search using SubDL source" title="Search using SubDL source">
+                  <code class="text-sm text-primary-500 hover:text-primary-600 transition duration-100 break-words">/search?id=tt3659388&source=subdl</code>
+                </a>
+              </div>
+              <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
                 <h3 class="font-semibold text-type-subheader">Search by hearing impaired</h3>
                 <a href="/search?id=tt3659388&hi=true" alt="Example link: search by hearing impaired" title="Search by hearing impaired">
                   <code class="text-sm text-primary-500 hover:text-primary-600 transition duration-100 break-words">/search?id=tt3659388&hi=true</code>
@@ -268,7 +294,7 @@ export default eventHandler(() => {
           <div class="flex justify-between text-xs text-type-footer mt-7">
             <p class="text-left">Made with <a href="https://nitro.unjs.io" class="text-primary-500 hover:text-primary-600 transition duration-100 underline" alt="Nitro framework" title="Nitro framework">Nitro</a></p>
             <p class="text-right">
-              Version: 6.8
+              Version: 7.0
             </p>
           </div>
         </section>
