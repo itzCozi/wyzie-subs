@@ -13,7 +13,7 @@
 - **Free**: The API is completely free to use and has no rate limits (don't abuse this please 🙏).
 - **Open-Source**: The API is open-source and you can host it yourself if you want to.
 
-### Currently Supported Providers
+**Currently Supported Providers**  
 1. [OpenSubtitles](https://www.opensubtitles.org/)
 2. [SubDl](https://subdl.com/)
 3. [Subscene](https://subscene.com/) (Soon)
@@ -27,3 +27,5 @@ Please note: the `id` url parameter can be used interchangable with either a TMD
 <sup>
   All parameters work with both TMDB and IMDB IDs, aswell as shows and movies.
 </sup>
+
+![image](https://github.com/user-attachments/assets/45dec134-defb-4a2b-b466-1ec656618ac7)
