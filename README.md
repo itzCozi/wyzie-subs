@@ -22,27 +22,3 @@ Please note: the `id` url parameter can be used interchangable with either a TMD
 <sup>
   All parameters work with both TMDB and IMDB IDs, aswell as shows and movies.
 </sup>
-
-### Search by IMDB / TMDB ID
-```http
-GET https://sub.wyzie.ru/search?id=872585  // Fetching subtitles for the movie "Oppenheimer" with the TMDB ID
-GET https://sub.wyzie.ru/search?id=tt1877830  // Fetching subtitles for the movie "The Batman" with the IMDB ID
-GET https://sub.wyzie.ru/search?id=126506&season=1&episode=1  // Fetching subtitles for the show "Smiling Friends" S1E1 with the TMDB ID
-GET https://sub.wyzie.ru/search?id=tt2861424&season=1&episode=1  // Fetching subtitles for the show "Rick and Morty" S1E1 with the IMDB ID
-```
-
-### Search by language
-```http
-GET https://sub.wyzie.ru/search?id=872585&&language=en  // Fetching English subtitles for the movie "Oppenheimer" with the TMDB ID
-GET https://sub.wyzie.ru/search?id=tt1877830&&language=ru  // Fetching Russian subtitles for the movie "The Batman" with the IMDB ID
-```
-
-### Search by format
-<sup>
-  Available formats are: srt, ass, vtt, txt, sub, mpl, webvtt, dfxp
-</sup>
-
-```http
-GET https://sub.wyzie.ru/search?id=872585&format=srt  // Fetching subtitles in SRT format for the movie "Oppenheimer" with the TMDB ID
-GET https://sub.wyzie.ru/search?id=tt1877830&format=srt  // Fetching subtitles in SRT format for the movie "The Batman" with the TMDB ID
-```
