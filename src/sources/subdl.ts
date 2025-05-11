@@ -200,16 +200,39 @@ export async function searchSubdl(request: RequestType): Promise<ResponseType[]>
     const results: ResponseType[] = [];
 
     for (const [language, subtitles] of Object.entries(pageProps.groupedSubtitles)) {
-      let langCode = "en"; // Default to English if lookup fails
+      let langCode = "en";
       const lowerLangName = language.toLowerCase().trim();
 
-      const isoLangCode = ISO6391.getCode(lowerLangName);
-      if (isoLangCode) {
-        langCode = isoLangCode.toLowerCase();
+      // Custom mapping for non-standard language names
+      const customLanguageMap: Record<string, string> = {
+        "brazillian-portuguese": "pt",
+        "brazilian-portuguese": "pt",
+        "brazilian portuguese": "pt",
+        portugese: "pt",
+        "chinese-bg-code": "zh",
+        "chinese simplified": "zh",
+        "chinese traditional": "zh",
+        farsi_persian: "fa",
+        "farsi/persian": "fa",
+        farsi: "fa",
+        ukranian: "uk",
+        português: "pt",
+        "português-brasileiro": "pt",
+        "português-brasil": "pt",
+      };
+
+      // Check custom map first, then try ISO6391
+      if (lowerLangName in customLanguageMap) {
+        langCode = customLanguageMap[lowerLangName];
       } else {
-        console.warn(
-          `[SubDL] Could not find code for language name: "${language}", defaulting to 'en'.`,
-        );
+        const isoLangCode = ISO6391.getCode(lowerLangName);
+        if (isoLangCode) {
+          langCode = isoLangCode.toLowerCase();
+        } else {
+          console.warn(
+            `[SubDL] Could not find code for language name: "${language}", defaulting to 'en'.`,
+          );
+        }
       }
 
       if (

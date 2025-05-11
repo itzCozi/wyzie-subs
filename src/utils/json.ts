@@ -1,3 +1,5 @@
+/** @format */
+
 import type { Subtitle, SubtitleInput } from "~/utils/types";
 
 export function parseSubtitles(jsonString: string): Subtitle[] {

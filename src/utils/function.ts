@@ -40,7 +40,7 @@ async function processOpenSubtitlesResults(
           language: sub.ISO639,
           media: sub.MovieName,
           isHearingImpaired: sub.SubHearingImpaired === "1",
-          source: "opensubtitles", // Tag the source explicitly
+          source: "opensubtitles",
         };
       }
       return null;
@@ -51,7 +51,6 @@ async function processOpenSubtitlesResults(
 
 export async function search(request: RequestType): Promise<ResponseType[]> {
   try {
-    // Ensure imdbId is present, converting from tmdbId if necessary
     if (!request.imdbId) {
       if (request.tmdbId) {
         const mediaType = request.season !== undefined ? "tv" : "movie";
@@ -67,7 +66,6 @@ export async function search(request: RequestType): Promise<ResponseType[]> {
       tmdbId: undefined, // Clear tmdbId after conversion
     };
 
-    // Handle multiple sources
     const sources =
       Array.isArray(safeRequest.source) ? safeRequest.source
       : typeof safeRequest.source === "string" ? safeRequest.source.split(",")
@@ -88,7 +86,6 @@ export async function search(request: RequestType): Promise<ResponseType[]> {
       }
     }
 
-    // Default behavior: Only search OpenSubtitles if no source is specified
     if (results.length === 0 && sources.length === 0) {
       console.log("[Search] No specific source requested, defaulting to OpenSubtitles.");
       const data = await fetchSubtitles(safeRequest);
@@ -97,7 +94,6 @@ export async function search(request: RequestType): Promise<ResponseType[]> {
 
     return results;
   } catch (e) {
-    // Catch errors from ID conversion or other unexpected issues
     console.error(`[Search] Unexpected error in search function:`, e);
     return [];
   }

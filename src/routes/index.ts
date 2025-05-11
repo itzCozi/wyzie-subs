@@ -9,8 +9,13 @@ export default eventHandler(() => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wyzie Subs - Subtitles API</title>
     <meta name="description" content="A powerful subtitle scraping API for anything. <3" />
-    <meta name="keywords" content="subtitles, subtitle scraper, API, movie subtitles, Wyzie Subs, open-subtitles scraper api, subtitles scraper api" />
+    <meta name="keywords" content="subtitles, subtitle scraper, API, movie subtitles, Wyzie Subs, open-subtitles scraper api, subtitles scraper api, free, open-source, open source" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="Wyzie Subs" />
+    <meta name="twitter:site" content="@sudoflix" />
+    <meta name="twitter:creator" content="@sudoflix" />
     <meta name="author" content="BadDeveloper" />
+    <meta name="theme-color" content="#1d4ed8" />
     <link rel="icon" href="https://i.postimg.cc/L5ppKYC5/cclogo.png" alt="Wyzie Subs Logo" />
     <meta property="og:title" content="Wyzie Subs - Subtitles API" />
     <meta property="og:description" content="A powerful subtitle scraping API for anything. <3" />
@@ -30,6 +35,32 @@ export default eventHandler(() => {
     <script type="application/ld+json">
       {
         "@context": "http://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://sub.wyzie.ru"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "FAQ",
+            "item": "https://docs.wyzie.ru/faq"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Docs",
+            "item": "https://docs.wyzie.ru"
+          }
+        ]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
         "@type": "WebSite",
         "name": "Wyzie Subs",
         "url": "https://sub.wyzie.ru",
@@ -38,23 +69,30 @@ export default eventHandler(() => {
           "@type": "SearchAction",
           "target": "https://sub.wyzie.ru/search?q={search_term_string}",
           "query-input": "required name=search_term_string"
+        },
+        "sameAs": ["https://github.com/itzcozi/wyzie-subs", "https://x.com/sudoflix", "https://discord.gg/2mxraHBVtB"],
+        "creator": {
+          "@type": "Person",
+          "name": "BadDeveloper",
+          "url": "https://github.com/itzcozi"
         }
       }
     </script>
     <script>
       const links = [
         "https://sub.wyzie.ru/search?id=tt3659388&encoding=utf-8,ascii&language=en&format=srt,sub,ass",
-        "/search?id=tt3659388&language=en&format=srt",
-        "/search?id=872585&language=nl",
-        "/search?id=tt1130884&format=srt",
-        "/search?id=1023922",
-        "/search?id=tt1853728",
-        "/search?id=1422&season=2&episode=4",
-        "/search?id=126506&season=1&episode=3&language=en",
-        "/search?id=tt0264464",
-        "/search?id=2288&season=1&episode=3&hi=true",
-        "/search?id=533535&hi=true",
-        "/search?id=2567",
+        "https://sub.wyzie.ru/search?id=tt3659388&language=en&format=srt",
+        "https://sub.wyzie.ru/search?id=872585&language=nl",
+        "https://sub.wyzie.ru/search?id=tt1130884&format=srt",
+        "https://sub.wyzie.ru/search?id=1023922",
+        "https://sub.wyzie.ru/search?id=tt1853728",
+        "https://sub.wyzie.ru/search?id=1422&season=2&episode=4",
+        "https://sub.wyzie.ru/search?id=126506&season=1&episode=3&language=en",
+        "https://sub.wyzie.ru/search?id=tt0264464",
+        "https://sub.wyzie.ru/search?id=2288&season=1&episode=3&hi=true",
+        "https://sub.wyzie.ru/search?id=533535&hi=true",
+        "https://sub.wyzie.ru/search?id=2567",
+        "https://sub.wyzie.ru/search?id=tt20969586&source=subdl"
       ];
 
       function toggleExtraOptions() {
@@ -103,13 +141,17 @@ export default eventHandler(() => {
 
       <main>
         <section>
-          <p class="text-type-dimmed mb-4">
-            Wyzie Subs is a free & libre open-subtitles scraping API that uses proxied requests instead of fetching directly from the API.
-            <br />
+          <p class="text-type-dimmed mb-1">
+            Wyzie Subs is a free & libre subtitles API that uses proxied requests and scraping instead of fetching directly from the API.
+          </p>
+          <div class="flex flex-row items-center justify-between mb-4">
             <a href="https://docs.wyzie.ru/subs/intro" class="text-primary-500 font-semibold hover:text-primary-600 transition duration-100 underline" alt="Wyzie Subs docs" title="Read our docs">
               Read our docs
             </a>
-          </p>
+            <a href="https://donate.cozi.lol" class="text-primary-500 font-semibold hover:text-primary-600 transition duration-100 underline" alt="Donate to Wyzie Subs" title="Donate to Wyzie Subs">
+              Donate to us
+            </a>
+          </div>
         </section>
 
         <section>
@@ -287,14 +329,14 @@ export default eventHandler(() => {
 
         <section>
           <a onclick="redirectToRandomLink()" class="flex justify-center" alt="Example check it out button" title="Example requests">
-            <button name="Example request" class="text-type-emphasized shadow-lg text-lg w-5/6 py-1 rounded bg-primary-700 hover:scale-105 hover:bg-primary-700/90 duration-150">
+            <button name="Example request" class="text-type-emphasized shadow-lg text-lg w-5/6 py-1 rounded bg-primary-700 hover:shadow-xl hover:scale-105 hover:bg-primary-700/90 duration-150">
               Check it out
             </button>
           </a>
           <div class="flex justify-between text-xs text-type-footer mt-7">
             <p class="text-left">Made with <a href="https://nitro.unjs.io" class="text-primary-500 hover:text-primary-600 transition duration-100 underline" alt="Nitro framework" title="Nitro framework">Nitro</a></p>
             <p class="text-right">
-              Version: 7.0
+              Version: 7.4
             </p>
           </div>
         </section>

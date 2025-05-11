@@ -161,27 +161,68 @@ function cleanSubtitleText(text: string): string {
  * yes i read all the purpose of these encodings
  */
 const ENCODING_ATTEMPTS = [
+  "utf-7", // legacy internet mail encoding
+  "us-ascii", // plain 7-bit ASCII
   "utf-8", // the cool kid
-  "windows-1256", // arabi sheikhs'  BFF
+  "windows-1256", // arabi sheikhs' BFF
   "iso-8859-6", // arabi sheikhs' other BFF
   "windows-1252", // west europe's party animal
   "iso-8859-1", // its latin; thought about latina? grow up
-  "windows-1251", // in soviet russia , text encodes YOU, COMRADE
+  "windows-1251", // in soviet russia, text encodes YOU, COMRADE
   "iso-8859-5", // cyrillic's cousin
   "iso-8859-2", // central europe's favorite
   "windows-1250", // the windows that central europe actually likes
   "iso-8859-7", // its all greek to me
   "windows-1253", // windows goes greek
   "iso-8859-9", // turkish kebab
-  "windows-1254", // windows  consumed turkish kebab
-  "big5", // traditional chinese;  size matters! (wink wink)
+  "windows-1254", // windows consumed turkish kebab
+  "big5", // traditional chinese; size matters! (wink wink)
   "gbk", // simplified chinese
-  "shift-jis", // japanese shifting into high gear for that epic  drift
+  "shift-jis", // japanese shifting into high gear for that epic drift
   "euc-jp", // another japanese contender
-  "euc-kr", // korean  encoding (no it is NOT kpop)
+  "euc-kr", // korean encoding (no it is NOT kpop)
   "utf-16le", // unicode's "little" sibling
+  "utf-16be", // unicode's "big" sibling
+  "utf-32le", // unicode's "giant" little sibling
+  "utf-32be", // unicode's "giant" big sibling
   "iso-8859-8", // jewish hangout
-  "windows-1255", // windows speaks jewish; its like american talking jewish to jews, funny
+  "windows-1255", // windows speaks jewish; it's like american talking jewish to jews, funny
+  "iso-8859-8-i", // logical Hebrew
+  "iso-2022-jp", // japanese email encoding
+  "iso-2022-cn", // chinese email encoding
+  "iso-2022-kr", // korean email encoding
+  "koi8-r", // russian cyrillic encoding
+  "koi8-u", // ukrainian cyrillic encoding
+  "macintosh", // mac roman encoding
+  "macroman", // older mac encoding
+  "ibm850", // DOS western europe
+  "ibm437", // DOS US
+  "gb18030", // modern chinese encoding
+  "hz-gb-2312", // simplified chinese
+  "tis-620", // thai encoding
+  "windows-874", // windows thai encoding
+  "x-mac-cyrillic", // mac cyrillic
+  "x-mac-greek", // mac greek
+  "x-mac-turkish", // mac turkish
+  "x-mac-hebrew", // mac hebrew
+  "x-mac-arabic", // mac arabic
+  "iso-8859-3", // south european, esperanto, maltese
+  "iso-8859-4", // baltic languages, greenlandic, sami
+  "iso-8859-10", // nordic languages (sami, inuit)
+  "iso-8859-13", // baltic languages redux
+  "iso-8859-14", // celtic languages, because druids need subtitles too
+  "iso-8859-15", // western european with euro sign, fancy!
+  "iso-8859-16", // romanian and other southeast european
+  "windows-1257", // windows baltic, for when windows goes sailing
+  "windows-1258", // windows vietnamese, phở your viewing pleasure
+  "x-mac-romanian", // mac's romanian vacation
+  "x-mac-ukrainian", // mac goes to kyiv
+  "cp437", // original IBM PC character set, retro cool
+  "cp850", // DOS multilingual, for multinational DOS lovers
+  "cp852", // DOS central european, communist DOS
+  "cp866", // DOS cyrillic, for soviet DOS enthusiasts
+  "viscii", // vietnamese, more than just good soup
+  "x-mac-ce", // mac central european, apple's eastern expansion
 ];
 
 /**
@@ -471,14 +512,21 @@ function extractTextContent(subtitleItem: UnzipItem): SubtitleExtractResult {
 
         if (!textContent || textContent.trim().length === 0 || hasGarbledText(textContent)) {
           console.log("[SubDL Unzip] time for plan z");
-          const textRegex = /[A-Za-z0-9\s.,!?;:'"()\[\]{}<>\/\\|@#$%^&*+=_-]{10,}/g;
+          // Make regex more efficient by avoiding unnecessary character classes
+          const textRegex = /[\w\s.,!?;:'"()\[\]{}<>\/\\|@#$%^&*+=_-]{10,}/g;
           const textMatches = rawString.match(textRegex) || [];
 
-          if (textMatches.length > 0) {
+          // Add additional filtering for quality
+          const filteredMatches = textMatches.filter((match) => {
+            // Filter out matches that don't have enough letter characters
+            return /[a-zA-Z]{3,}/.test(match);
+          });
+
+          if (filteredMatches.length > 0) {
             console.log(
-              `[SubDL Unzip] Found ${textMatches.length} text chunks! Better than nothing! 🤷‍♂️`,
+              `[SubDL Unzip] Found ${filteredMatches.length} text chunks! Better than nothing! 🤷‍♂️`,
             );
-            textContent = textMatches.join("\n\n");
+            textContent = filteredMatches.join("\n\n");
           }
         }
 

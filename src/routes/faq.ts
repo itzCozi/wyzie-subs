@@ -9,8 +9,13 @@ export default eventHandler(() => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wyzie Subs - FAQ</title>
     <meta name="description" content="A powerful subtitle scraping API for anything. <3" />
-    <meta name="keywords" content="subtitles, subtitle scraper, API, movie subtitles, Wyzie Subs" />
+    <meta name="keywords" content="subtitles, subtitle scraper, API, movie subtitles, Wyzie Subs, open-subtitles scraper api, subtitles scraper api, free, open-source, open source" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="Wyzie Subs - FAQ" />
+    <meta name="twitter:site" content="@sudoflix" />
+    <meta name="twitter:creator" content="@sudoflix" />
     <meta name="author" content="BadDeveloper" />
+    <meta name="theme-color" content="#1d4ed8" />
     <link rel="icon" href="https://i.postimg.cc/L5ppKYC5/cclogo.png" alt="Wyzie Subs Logo" />
     <meta property="og:title" content="Wyzie Subs - FAQ" />
     <meta property="og:description" content="A powerful subtitle scraping API for anything. <3" />
@@ -27,20 +32,6 @@ export default eventHandler(() => {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="application/ld+json">
-      {
-        "@context": "http://schema.org",
-        "@type": "WebSite",
-        "name": "Wyzie Subs",
-        "url": "https://sub.wyzie.ru",
-        "logo": "https://i.postimg.cc/L5ppKYC5/cclogo.png",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://sub.wyzie.ru/search?id={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
-      }
-    </script>
     <script>
       tailwind.config = {
         darkMode: "class",
@@ -83,9 +74,15 @@ export default eventHandler(() => {
           </p>
         </div>
         <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
+          <h3 class="font-semibold text-type-subheader">Do you take donations?</h3>
+          <p class="text-type-dimmed text-sm">
+            I take donations via crypto. If you want to donate, please go to my donation page at <a href="https://donate.cozi.lol" class="text-primary-500 hover:text-primary-600 transition duration-100 underline font-semibold" alt="Donation page" title="Donation page">donate.cozi.lol</a>.
+          </p>
+        </div>
+        <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
           <h3 class="font-semibold text-type-subheader">How reliable is it?</h3>
           <p class="text-type-dimmed text-sm">
-            We pride ourselves on our consistent uptime and almost daily updates as well as fast caching.
+            We pride ourselves on our consistent uptime and almost daily updates as well as fast caching. That being said if you are experiencing issues please reach out to us.
           </p>
         </div>
         <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
@@ -98,13 +95,7 @@ export default eventHandler(() => {
         <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
           <h3 class="font-semibold text-type-subheader">Can I use this for a streaming site?</h3>
           <p class="text-type-dimmed text-sm">
-            Almost all of our users are streaming sites, so yes, you can use it for a streaming site.
-          </p>
-        </div>
-        <div class="bg-mono-accent shadow-xl p-4 rounded-md flex flex-col gap-1">
-          <h3 class="font-semibold text-type-subheader">Will you guys do sketchy stuff with my info?</h3>
-          <p class="text-type-dimmed text-sm">
-            No. I pinky swear aside from cloudflare logs (for trouble shooting and health checks) nothing is stored.
+            Almost all of our users are streaming sites, so yes, you can definitely use it for a streaming site.
           </p>
         </div>
       </div>

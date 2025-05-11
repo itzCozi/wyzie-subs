@@ -13,13 +13,10 @@
 - **Free**: The API is completely free to use and has no rate limits (don't abuse this please 🙏).
 - **Open-Source**: The API is open-source and you can host it yourself if you want to.
 
+### Request Flow Chart
+![request flow chart](.github/flowchart.png)
+
 ### Usage Example
-
-**Required Environment Variable**:
-
-```
-PROXIES=https://torn-unicorn.fly.dev,https://proxy.wyzie.ru
-```
 
 Please note: the `id` url parameter can be used interchangable with either a TMDB ID or an IMDB ID. It checks for "tt" to determine if it's an IMDB ID or not. Using a TMDB ID is slower as we have to request the IMDB ID from TMDB first.
 <sup>
@@ -49,7 +46,3 @@ GET https://sub.wyzie.ru/search?id=tt1877830&&language=ru  // Fetching Russian s
 GET https://sub.wyzie.ru/search?id=872585&format=srt  // Fetching subtitles in SRT format for the movie "Oppenheimer" with the TMDB ID
 GET https://sub.wyzie.ru/search?id=tt1877830&format=srt  // Fetching subtitles in SRT format for the movie "The Batman" with the TMDB ID
 ```
-
-<sup>
-  P.S. The reason the initial commit is so large is because I had to upload the entire project to this account from the sussy-code organization. I had to do this because the main website is hosted on private repository with a huge proxies.json file instead of env vars. This repo is also out of date with the main production one.
-</sup>

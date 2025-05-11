@@ -7,6 +7,7 @@ import numberToWords from "number-to-words";
 
 const { toWords } = numberToWords;
 
+// Fetches using proxy from opensubs
 export const fetchSubtitles = async (request: RequestType) => {
   const { imdbId, season, episode } = request;
   const url = `https://rest.opensubtitles.org/search/${
@@ -70,21 +71,66 @@ export const createErrorResponse = (
 };
 
 export function numberToCardinal(n: number): string {
-  const suffixes: { [key: number]: string } = {
-    1: "first",
-    2: "second",
-    3: "third",
-  };
+  if (n <= 0) {
+    throw new Error("numberToCardinal only works with positive numbers");
+  }
 
-  const exceptions = [11, 12, 13]; // Special cases for 11th, 12th, 13th
-  const remainder = n % 10;
-  const suffix = exceptions.includes(n % 100) ? "th" : suffixes[remainder] || "th";
+  // Special case for single-digit numbers for simplicity
+  if (n < 10) {
+    switch (n) {
+      case 1:
+        return "first";
+      case 2:
+        return "second";
+      case 3:
+        return "third";
+      case 4:
+        return "fourth";
+      case 5:
+        return "fifth";
+      case 6:
+        return "sixth";
+      case 7:
+        return "seventh";
+      case 8:
+        return "eighth";
+      case 9:
+        return "ninth";
+    }
+  }
 
+  // Get the word representation of the number
   const words = toWords(n);
-  const ordinal =
-    exceptions.includes(n % 100) ?
-      `${words}th`
-    : words.replace(/\b(one|two|three)\b/, (match) => suffixes[remainder] || match);
 
-  return ordinal;
+  // Handle exceptions for 11, 12, 13
+  const lastTwoDigits = n % 100;
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
+    return `${words}th`;
+  }
+
+  const lastDigit = n % 10;
+  switch (lastDigit) {
+    case 1:
+      return words.replace(/(\W|^)(one)$/, "$1first");
+    case 2:
+      return words.replace(/(\W|^)(two)$/, "$1second");
+    case 3:
+      return words.replace(/(\W|^)(three)$/, "$1third");
+    case 4:
+      return words.replace(/(\W|^)(four)$/, "$1fourth");
+    case 5:
+      return words.replace(/(\W|^)(five)$/, "$1fifth");
+    case 6:
+      return words.replace(/(\W|^)(six)$/, "$1sixth");
+    case 7:
+      return words.replace(/(\W|^)(seven)$/, "$1seventh");
+    case 8:
+      return words.replace(/(\W|^)(eight)$/, "$1eighth");
+    case 9:
+      return words.replace(/(\W|^)(nine)$/, "$1ninth");
+    case 0:
+      return `${words}th`;
+    default:
+      return `${words}th`;
+  }
 }

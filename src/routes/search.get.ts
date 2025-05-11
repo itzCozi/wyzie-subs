@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
     return createErrorResponse(
       400,
       "Both season and episode are required",
-      "If episode or season is present the other must also be present. Or else...",
+      "If episode or season is present the other must also be present. Or else... (shit jus acts up)",
       "/search?id=tt0111161&season=1&episode=1",
     );
   }
@@ -89,7 +89,7 @@ export default defineEventHandler(async (event) => {
     return createErrorResponse(
       400,
       "Invalid format",
-      "Format must be one of the following: srt, txt, sub, ssa, ass.",
+      "Format must be one or more of the following: srt, txt, sub, ssa, ass.",
       "/search?id=tt0111161&format=srt",
     );
   }
@@ -144,7 +144,7 @@ export default defineEventHandler(async (event) => {
           const host =
             process.env.NODE_ENV === "production" ?
               "https://sub.wyzie.ru"
-            : "http://localhost:8787";
+            : "http://localhost:3000";
           const pseudoVrf = id;
           const cleanFilename = filename.endsWith(".zip") ? filename.slice(0, -4) : filename;
           let downloadId = cleanFilename.includes("-") ? cleanFilename : `${id}-${cleanFilename}`;
@@ -182,11 +182,14 @@ export default defineEventHandler(async (event) => {
     });
 
     if (isCacheAvailable && cache && finalResponse.ok) {
+      console.log(`Caching successful response with status: ${finalResponse.status}`);
       if (typeof event.waitUntil === "function") {
         event.waitUntil(cache.put(cacheKey, finalResponse.clone()));
       } else {
         await cache.put(cacheKey, finalResponse.clone());
       }
+    } else if (isCacheAvailable && cache) {
+      console.log(`Not caching response with status: ${finalResponse.status}`);
     }
 
     return finalResponse;

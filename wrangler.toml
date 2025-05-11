@@ -14,3 +14,7 @@ head_sampling_rate = 1
 [build]
 command = "pnpm build:cloudflare"
 watch_dir = "src"
+
+[vars]
+PROXY_SECRET = "N7CCNDxwbIjtqkDehYpyMvcKzEDc9e3N"
+
