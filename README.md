@@ -13,6 +13,11 @@
 - **Free**: The API is completely free to use and has no rate limits (don't abuse this please 🙏).
 - **Open-Source**: The API is open-source and you can host it yourself if you want to.
 
+### Currently Supported Providers
+1. [OpenSubtitles](https://www.opensubtitles.org/)
+2. [SubDl](https://subdl.com/)
+3. [Subscene](https://subscene.com/) (Soon)
+
 ### Request Flow Chart
 ![request flow chart](.github/flowchart.png)
 
