@@ -36,7 +36,7 @@
   "editor.roundedSelection": true,
   "editor.cursorStyle": "block",
   "editor.minimap.size": "proportional",
-  "editor.minimap.autohide": true,
+  "editor.minimap.autohide": "mouseover",
   "editor.minimap.renderCharacters": true,
   "editor.minimap.showSlider": "always",
   "git.enableSmartCommit": true,

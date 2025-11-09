@@ -23,7 +23,7 @@ export async function searchSubdl(request: RequestType): Promise<ResponseType[]>
     // CAN break when SubDL updates their website so yea if it
     // dies then its probably because subdl changed the build id
 
-    const buildId = "but--nncc5Fg0uqE42LOb";
+    const buildId = "ULEay2yh9blH4JjD-J3ba";
     const searchApiUrl = `https://subdl.com/_next/data/${buildId}/en/search/${request.imdbId}.json?slug=${request.imdbId}`;
     const headers = {
       referer: `https://subdl.com/search/${request.imdbId}`,

@@ -1,56 +1,19 @@
 /** @format */
 
 import { subtle } from "crypto";
-
-export const USER_AGENTS = [
-  // Windows browsers
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0",
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0",
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/120.0.0.0 Safari/537.36",
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/123.0.0.0 Safari/537.36",
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.2365.92",
-  "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
-
-  // MacOS browsers
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15",
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Safari/605.1.15",
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:120.0) Gecko/20100101 Firefox/120.0",
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:123.0) Gecko/20100101 Firefox/123.0",
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.2365.92",
-  "Mozilla/5.0 (Macintosh; Apple M2; Mac OS X 14_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Safari/605.1.15",
-
-  // Linux browsers
-  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-  "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
-  "Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0",
-  "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
-  "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0",
-  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.2365.92",
-  "Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-
-  // Mobile Browsers
-  "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1",
-  "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1",
-  "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1",
-  "Mozilla/5.0 (Linux; Android 13; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
-  "Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Mobile Safari/537.36",
-  "Mozilla/5.0 (Linux; Android 13; Pixel 6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
-  "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Mobile Safari/537.36",
-  "Mozilla/5.0 (iPad; CPU OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1",
-  "Mozilla/5.0 (Linux; Android 14; SM-X900) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-  "Mozilla/5.0 (Linux; Android 14; SAMSUNG SM-A546B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/23.0 Chrome/115.0.0.0 Mobile Safari/537.36",
-];
+import { USER_AGENTS } from "~/utils/userAgents";
 
 const getHeaders = (userAgent: string, extraHeaders: Record<string, string> = {}) => {
+  const isMobile = userAgent.includes("Mobile") || userAgent.includes("Android");
   const isWindows = userAgent.includes("Windows");
   const isMac = userAgent.includes("Macintosh");
-  const isMobile = userAgent.includes("Mobile");
+  const isLinux = userAgent.includes("Linux");
+
+  let chromeVersion = "137";
+  const chromeMatch = userAgent.match(/Chrome\/([0-9]+)/);
+  if (chromeMatch && chromeMatch[1]) {
+    chromeVersion = chromeMatch[1];
+  }
 
   const defaultHeaders = {
     "User-Agent": userAgent,
@@ -59,14 +22,15 @@ const getHeaders = (userAgent: string, extraHeaders: Record<string, string> = {}
     "Accept-Encoding": "gzip, deflate, br",
     "Sec-Ch-Ua":
       userAgent.includes("Chrome") ?
-        '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"'
+        `"Chromium";v="${chromeVersion}", "Not(A:Brand";v="24", "Google Chrome";v="${chromeVersion}"`
       : null,
     "Sec-Ch-Ua-Mobile": isMobile ? "?1" : "?0",
     "Sec-Ch-Ua-Platform": `"${
-      isWindows ? "Windows"
+      isMobile && !isWindows && !isMac ? "Android"
+      : isWindows ? "Windows"
       : isMac ? "macOS"
-      : isMobile ? "Android"
-      : "Linux"
+      : isLinux ? "Linux"
+      : "Unknown"
     }"`,
     "Sec-Fetch-Dest": "document",
     "Sec-Fetch-Mode": "navigate",
@@ -97,28 +61,32 @@ async function deriveToken(sharedSecret: string, key: string): Promise<string> {
 
 export async function proxyFetch(url: string, options?: RequestInit): Promise<Response> {
   try {
-    const proxy = "https://i6.ilysm.nl";
+    const proxy =
+      process.env.NODE_ENV === "production" ? "https://proxy.ar0.eu" : "http://83.229.17.104";
     const proxyUrl = new URL(proxy);
     const userAgent = USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
     const defaultHeaders = getHeaders(userAgent);
     const sharedSecret = process.env.PROXY_SECRET;
     if (!sharedSecret || sharedSecret.trim() === "") {
-      throw new Error("PROXY_SECRET is not set. Valve pls fix.");
+      throw new Error("PROXY_SECRET is not set");
     }
     const apiToken = await deriveToken(sharedSecret, userAgent);
-
     proxyUrl.searchParams.set("url", url);
+
     const proxyOptions = {
       ...options,
       headers: {
         ...defaultHeaders,
         ...options?.headers,
         "API-Token": apiToken,
+        Referer: options?.headers?.["Referer"] || "",
+        Origin: options?.headers?.["Origin"] || null,
       },
     };
 
     return fetch(proxyUrl.toString(), proxyOptions);
   } catch (e) {
-    throw new Error(e);
+    console.error("Proxy fetch error:", e);
+    throw new Error(`Proxy request failed: ${e.message}`);
   }
 }
